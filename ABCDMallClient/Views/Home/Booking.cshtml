@@ -1,0 +1,270 @@
+﻿@*@using X.PagedList.Mvc.Core;*@
+@{
+    ViewData["Title"] = "Booking";
+}
+<style>
+
+    .screen{
+/*        width: 100%;
+        height: 45px;
+        margin: 20px auto 40px;
+        text-align: center;
+        background-image: url("data:wwwroot/images/store/bg-screen.png");
+        background-size: 100% auto;*/
+    }
+
+    
+    .infoTicket{
+        margin-top: 30px;
+        /*height: 250px;*/
+        background-color: black;
+    }
+
+    .top {
+        width: 100%;
+        background: url(/images/store/bg-top-seatmap.png) repeat-x top left transparent;
+        height: 8px;
+        overflow: hidden;
+    }
+
+    .bottom{
+        width: 100%;
+        background: url(/images/store/bg-bottom-seatmap.png) repeat-x bottom left transparent;
+        height: 8px;
+        overflow: hidden;
+    }
+
+    .cannel:before{
+        content:"X";
+        color: white;
+    }   
+    /*no-repeat top center transparent*/
+    .typeNote{
+        display: flex;
+        align-content: space-around;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        flex-direction: row;
+        align-items: center;
+    }
+    .mainDiv {
+        margin: 100px;
+        border: solid 2px springgreen;
+    }
+
+    #seatMap {
+        width: 390px;
+        margin: 0 auto;
+    }
+
+    .nameSeat {
+        font-size: 12px;
+    }
+
+    .seat {
+        border: 1px solid #01c73c;
+        border-radius: 4px;
+        text-align: center;
+        width: 30px;
+        height: 30px;
+        margin: 1px;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .seatCouple {
+        border: 1px solid #FF62B0;
+        color: white;
+        border-radius: 4px;
+        text-align: center;
+        width: 62px;
+        height: 30px;
+        margin: 1px;
+        display: inline-block;
+        cursor: pointer;
+        background-color: #FF62B0;
+    }
+
+    .seatNote{
+        border: 1px solid #01c73c;
+        text-align: center;
+        width: 20px;
+        height: 20px;
+        margin: 1px;
+        display: inline-block;
+/*        cursor: pointer;*/
+    }
+
+/*    .divCouple {
+        padding-left: 1px;
+    }*/
+
+    .selected {
+        border: 1px solid wheat;
+        background-color: #ff0000;
+    }
+</style>
+
+<div class="mainDiv">
+    <div >
+        <div class="title">
+            <h1 style="text-align:center; background-color: black; padding: 10px 0; color: white; font-size: 30px">Booking Online</h1>
+            <h2 style="padding: 10px; background-color: #fff1ce;">adasdasdas</h2>
+        </div>
+        <br />
+@*        <div class="screen">
+            <p>Screen</p>
+        </div>*@
+        <div id="seatMap">
+            <!-- Các ghế xem phim sẽ được tạo và hiển thị ở đây -->
+        </div>
+
+        @*<button id="submitButton">Đặt vé</button>*@
+
+    </div>
+    <div class="noteTicket">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-2"></div>
+            <div class="col-md-2">
+                <div class="typeNote">
+                    <div class="seatNote" style="background-color: #ff0000; border:none;"></div>
+                    <span>Checked</span>
+                </div>
+                <div class="typeNote">
+                    <div class="seatNote" style="background-color: #bbb; border:none;"></div>
+                    <span>Đã chọn</span>
+                </div>
+                <div class="typeNote">
+                    <div class="seatNote cannel" style="background-color: #bbb; border:none;"></div>
+                    <span>Không thể chọn</span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="typeNote">
+                    <div class="seatNote"></div>
+                    <span>Thường</span>
+                </div>
+                <div class="typeNote">
+                    <div class="seatNote" style="background-color: #FF62B0; border:none;"></div>
+                    <span>Ghế đôi</span>
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+            <div class="col-md-2"></div>
+        </div>
+    </div>
+    <div class="infoTicket">
+        <div class="top"></div>
+        <div class="contentTicket" style="height: 20px;">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="~/images/interstellar.jpg"/>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Tên film</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Thời gian</h4>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Phòng chiếu</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <h4>Ghế</h4>
+                    <h4>Tổng tiền</h4>
+                </div>
+                <div class="col-md-3">
+                    <button>Tiếp theo</button>
+                </div>
+            </div>
+        </div>
+        <div class="bottom"></div>
+    </div>
+</div>
+
+<script>
+    // Số lượng ghế và sơ đồ ghế xem phim
+    var totalSeats = 12;
+    var arrCell = ["A", "B", "C", "D", "E", "F", "G", "H"];
+    var selectedSeats = [];
+
+    // Tạo sơ đồ ghế xem phim
+    var seatMapElement = document.getElementById("seatMap");
+    for (var i = 0; i < arrCell.length; i++) {
+        const element = arrCell[i];
+        if (i == arrCell.length - 1) {
+            var divCouple = document.createElement("div");
+            divCouple.className = "divCouple";
+            for (var j = 1; j <= (totalSeats / 2); j++) {
+                // var wid = 63;
+                var seatElement = document.createElement("div");
+                var paragraphElement = document.createElement("p");
+                // seatElement.style.width = (wid+j).toString() + "px";
+                // seatElement.style.width = "63px";
+                paragraphElement.className = "nameSeatCouple";
+                seatElement.className = "seatCouple";
+                paragraphElement.textContent = element + j;
+                seatElement.addEventListener("click", function () {
+                    // Xử lý sự kiện khi ghế được chọn
+                    this.classList.toggle("selected");
+                    var seatNumber = parseInt(this.textContent);
+                    if (selectedSeats.includes(seatNumber)) {
+                        selectedSeats = selectedSeats.filter(function (seat) {
+                            return seat !== seatNumber;
+                        });
+                    } else {
+                        selectedSeats.push(seatNumber);
+                    }
+                });
+                seatElement.appendChild(paragraphElement);
+                divCouple.appendChild(seatElement);
+            }
+            seatMapElement.appendChild(divCouple);
+            var brElement = document.createElement("br");
+            seatMapElement.appendChild(brElement);
+        } else {
+            for (var j = 1; j <= totalSeats; j++) {
+                // const element = arrCell[i];
+
+                var seatElement = document.createElement("div");
+                var paragraphElement = document.createElement("p");
+                paragraphElement.className = "nameSeat";
+                seatElement.className = "seat";
+                paragraphElement.textContent = element + j;
+                seatElement.addEventListener("click", function () {
+                    // Xử lý sự kiện khi ghế được chọn
+                    this.classList.toggle("selected");
+                    var seatNumber = parseInt(this.textContent);
+                    if (selectedSeats.includes(seatNumber)) {
+                        selectedSeats = selectedSeats.filter(function (seat) {
+                            return seat !== seatNumber;
+                        });
+                    } else {
+                        selectedSeats.push(seatNumber);
+                    }
+                });
+                seatElement.appendChild(paragraphElement);
+                seatMapElement.appendChild(seatElement);
+            }
+            var brElement = document.createElement("br");
+            seatMapElement.appendChild(brElement);
+        }
+    }
+    var submitButton = document.getElementById("submitButton");
+    submitButton.addEventListener("click", function () {
+        if (selectedSeats.length > 0) {
+            alert("Bạn đã chọn ghế: " + selectedSeats.join(", "));
+        } else {
+            alert("Vui lòng chọn ít nhất một ghế.");
+        }
+    });
+</script>

@@ -1,0 +1,97 @@
+﻿@model ABCDMallClient.Areas.Admin.Models.ShowListFilmModel
+
+@{
+    ViewData["Title"] = "[Admin] Films";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+<style>
+    .Title {
+        padding-left: 20px;
+        padding-bottom: 10px;
+    }
+
+    .dong {
+        padding: 0 10px;
+    }
+
+    .DataGrid {
+        padding-top: 20px;
+    }
+
+    .btn{
+        border: none;
+        background-color: #004A7E;
+        color: white;
+        padding: 3px 15px;
+    }
+
+    .divBtn{
+        text-align: center;
+    }
+</style>
+<div>
+    <h3 class="Title">Quản lý Phim</h3>
+    <div class="row">
+        @foreach (var item in Model.listString)
+        {
+            <div class="col-md-4 dong">
+                <div class="row">
+                    <div class="col-md-5">
+                        <label>@item</label>
+                    </div>
+                    <div class="col-md-5">
+                        <input />
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <br/>
+
+    <div>
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-4 divBtn">
+                <button class="btn">Tìm kiếm</button>
+                <button class="btn">Làm mới</button>
+            </div>
+            <div class="col-md-4 divBtn">
+                <button class="btn">Ghi</button>
+                <button class="btn">Xóa</button>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+    </div>
+
+    <br/>
+
+    <div class="DataGrid">
+        <table style="width: 100%">
+            <thead>
+                <tr>
+                    @foreach (var item in Model.listString)
+                    {
+                        <th>@item</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var info in Model.listFilm)
+                {
+                    <tr>
+                        <td>@info.FilmId</td>
+                        <td>@info.Title</td>
+                        <td>@info.Actor</td>
+                        <td>@info.Director</td>
+                        <td>@info.Time</td>
+                        <td>@info.ReleaseDate</td>
+                        <td>@info.Image</td>
+                        <td>@info.Genre</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

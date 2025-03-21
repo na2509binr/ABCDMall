@@ -1,0 +1,753 @@
+﻿@model ABCDMallClient.Models.GetDataToViewModel;
+@using X.PagedList.Mvc.Core;
+@{
+    ViewData["Title"] = "Entertainment";
+}
+
+
+<style type="text/css">
+    .btn {
+        background-image: linear-gradient(to right, #0a64a7 0%, #258dcf 51%, #3db1f3 100%);
+        padding: 9px 111px;
+        color: white;
+        font-size: 16px;
+        margin: 15px 0;
+        border: none;
+    }
+
+        .btn:hover {
+            background-image: linear-gradient(to right, #0a64a7 1%, #258dcf 55%, #3db1f3 100%);
+        }
+
+
+    .backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 2;
+        display: none;
+        cursor: pointer;
+    }
+
+
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        /*overflow: hidden;*/
+    }
+
+    .default-content {
+        position: relative;
+        z-index: 1;
+        /* Các style khác cho nội dung mặc định */
+    }
+
+    .popup {
+        overflow: auto;
+        height: 650px;
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 1000px;
+        padding: 20px;
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+        z-index: 3;
+    }
+</style>
+
+<style>
+
+    .screen {
+        /*        width: 100%;
+            height: 45px;
+            margin: 20px auto 40px;
+            text-align: center;
+            background-image: url("data:wwwroot/images/store/bg-screen.png");
+            background-size: 100% auto;*/
+    }
+
+
+    .infoTicket {
+        color: white;
+        margin-top: 30px;
+        /*height: 250px;*/
+        background-color: black;
+    }
+
+    .top {
+        width: 100%;
+        background: url(/images/store/bg-top-seatmap.png) repeat-x top left transparent;
+        height: 8px;
+        overflow: hidden;
+    }
+
+    .bottom {
+        width: 100%;
+        background: url(/images/store/bg-bottom-seatmap.png) repeat-x bottom left transparent;
+        height: 8px;
+        overflow: hidden;
+    }
+
+    .cannel:before {
+        content: "X";
+        color: white;
+    }
+    /*no-repeat top center transparent*/
+    .typeNote {
+        display: flex;
+        align-content: space-around;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .mainDiv {
+        /*margin: 100px;*/
+        border: 2px solid #d4d3c9;
+    }
+
+    #seatMap {
+        width: 390px;
+        margin: 0 auto;
+    }
+
+    .nameSeat {
+        font-size: 12px;
+    }
+
+    .seat {
+        border: 1px solid #01c73c;
+        border-radius: 4px;
+        text-align: center;
+        width: 30px;
+        height: 30px;
+        margin: 1px;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .seatCouple {
+        border: 1px solid #FF62B0;
+        color: white;
+        border-radius: 4px;
+        text-align: center;
+        width: 62px;
+        height: 30px;
+        margin: 1px;
+        display: inline-block;
+        cursor: pointer;
+        background-color: #FF62B0;
+    }
+
+    .seatNote {
+        border: 1px solid #01c73c;
+        text-align: center;
+        width: 20px;
+        height: 20px;
+        margin: 1px;
+        display: inline-block;
+        /*        cursor: pointer;*/
+    }
+
+    /*    .divCouple {
+            padding-left: 1px;
+        }*/
+
+    .selected {
+        border: 1px solid wheat;
+        background-color: #ff0000;
+    }
+
+    .noteFilm {
+        padding: 10px;
+        background-color: #fff1ce;
+        font-size: 20px;
+        text-align: left
+    }
+
+    .Date{
+        border-bottom: 1px solid #ccc;
+        padding: 10px 0;
+        text-align: center;
+    }
+
+/*        .Date:focus {
+            color: white;
+            border-bottom: 3px solid #ff0000; 
+        }*/
+
+    .chooseDate:focus {
+        color: white;
+        border-bottom: 3px solid #ff0000;
+    }
+</style>
+
+<div class="default-content">
+    <!-- breadcrumbs -->
+    <div class="breadcrumb_about">
+        <div class="container">
+            <ul>
+                <li><a href="/"><span class="fa fa-home" aria-hidden="true"></span> Home</a> <i>/</i></li>
+                <li>Entertainment</li>
+            </ul>
+        </div>
+    </div>
+    <!-- //breadcrumbs -->
+    <!--e-grid1  Movies -->
+    <div class="e-grid1">
+        <div class="e-grid1-padding-w3ls">
+            <div style="border: 1px solid black; margin: 0 66px; font-family: Oswald">
+                <div class="row">
+                    @foreach (var item in Model.filmList)
+                    {
+                        <div class="col-md-3">
+                            @*<img style="border-radius: 23px" src="@Html.DisplayFor(modelItem => item.Title)">*@
+                            @*<img style="border-radius: 23px" src="@item.Image">*@
+                            <img style="border-radius: 23px" src="~/images/interstellar.jpg">
+                            <div style="padding: 10px">
+                                <p style="color: #337ab7; font-weight: 700; font-size: 18px; font-family: Oswald; padding-bottom: 10px">@Html.DisplayFor(modelItem => item.Title)</p>
+                                <p style="font-family: Oswald"><span style="font-weight: 700; font-size: 15px">Thể loại: </span>@Html.DisplayFor(modelItem => item.Genre)</p>
+                                <p style="font-family: Oswald"><span style="font-weight: 700; font-size: 15px">Thời lượng: </span>@Html.DisplayFor(modelItem => item.Time)</p>
+                                @*<a class="btn" onclick="openPopup">Mua vé</a>*@  @*asp-controller="Home" asp-action="Booking"*@
+                                <button type="button" class="btn btn-primary" onclick="openPopup()">Mua vé</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <h2> Movies in Multiplex</h2>
+            <div class="movie-slide">
+
+                <div class="col-md-4 e-grid1 movie-1">
+                    <div class="slider">
+                        <div class="wrap">
+                            <ul class="rslides" id="slider1">
+                                <li>  <img src="~/assets/images/ent1.jpg" class="img-responsive e-img" alt="">  </li>
+                                <li>  <img src="~/assets/images/ent2.jpg" class="img-responsive e-img" alt="">  </li>
+                                <li>  <img src="~/assets/images/ent3.jpg" class="img-responsive e-img" alt="">  </li>
+                                <li>  <img src="~/assets/images/ent4.jpg" class="img-responsive e-img" alt="">  </li>
+                                <li>  <img src="~/assets/images/ent5.jpg" class="img-responsive e-img" alt="">  </li>
+                                <li>  <img src="~/assets/images/ent6.jpg" class="img-responsive e-img" alt="">  </li>
+                                <li>  <img src="~/assets/images/ent7.jpg" class="img-responsive e-img" alt="">  </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="clearfix"> </div>
+                </div>
+
+                <div class="col-md-4 e-grid1 movie-1">
+
+                    <div class="movie-1-text-a">
+                        <div class="movie-1-text">
+                            <h4>Now Showing</h4>
+                            <p>Ipsum is simply dummy text of the printing and typesetting simply dummy text of the printing industry.</p>
+                        </div>
+                    </div>
+
+                    <div class="movie-1-text-b">
+                        <div class="movie-1-text">
+                            <h4>Coming Soon</h4>
+                            <p>Ipsum is simply dummy text of the printing and typesetting simply dummy text of the printing industry.</p>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+
+                <div class="col-md-4 e-grid1 movie-1">
+                    <div class="slider">
+                        <div class="wrap">
+                            <ul class="rslides" id="slider2">
+                                <li>  <img src="~/assets/images/ent7.jpg" class="img-responsive e-img" alt="">  </li>
+                                <li>  <img src="~/assets/images/ent6.jpg" class="img-responsive e-img" alt="">  </li>
+                                <li>  <img src="~/assets/images/ent5.jpg" class="img-responsive e-img" alt="">  </li>
+                                <li>  <img src="~/assets/images/ent1.jpg" class="img-responsive e-img" alt="">  </li>
+                                <li>  <img src="~/assets/images/ent2.jpg" class="img-responsive e-img" alt="">  </li>
+                                <li>  <img src="~/assets/images/ent3.jpg" class="img-responsive e-img" alt="">  </li>
+                                <li>  <img src="~/assets/images/ent4.jpg" class="img-responsive e-img" alt="">  </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="clearfix"> </div>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+        </div>
+    </div>
+    <!--//e-grid1-->
+    <!-- e-grid-middle   Movie ticket Booking -->
+    <div class="mov_ticket">
+        <div class="container">
+            <div class="mov-padding-agileits">
+
+                <div class="content-w3layouts">
+                    <h2>Multiplex Theatre Book here</h2>
+                    <div class="demo">
+                        <div id="seat-map">
+                            <div class="front">SCREEN</div>
+                        </div>
+                        <div class="booking-details">
+                            <ul class="book-left">
+                                <li>Movie </li>
+                                <li>Time </li>
+                                <li>Tickets</li>
+                                <li>Total</li>
+                                <li>Seats :</li>
+                            </ul>
+                            <ul class="book-right">
+                                <li>: Gingerclown</li>
+                                <li>: April 3, 21:00</li>
+                                <li>: <span id="counter1">0</span></li>
+                                <li>: <b><i>$</i><span id="total">0</span></b></li>
+                            </ul>
+                            <div class="clear"></div>
+                            <ul id="selected-seats" class="scrollbar scrollbar1"></ul>
+
+
+                            <button class="checkout-button">Book Now</button>
+                            <div id="legend"></div>
+                        </div>
+                        <div style="clear:both"></div>
+                    </div>
+
+                    <script type="text/javascript">
+                        var price = 10; //price
+                        $(document).ready(function () {
+                            var $cart = $('#selected-seats'), //Sitting Area
+                                $counter1 = $('#counter1'), //Votes
+                                $total = $('#total'); //Total money
+
+                            var sc = $('#seat-map').seatCharts({
+                                map: [  //Seating chart
+                                    'aaaaaaaaaa',
+                                    'aaaaaaaaaa',
+                                    '__________',
+                                    'aaaaaaaa__',
+                                    'aaaaaaaaaa',
+                                    'aaaaaaaaaa',
+                                    'aaaaaaaaaa',
+                                    'aaaaaaaaaa',
+                                    'aaaaaaaaaa',
+                                    '__aaaaaa__'
+                                ],
+                                naming: {
+                                    top: false,
+                                    getLabel: function (character, row, column) {
+                                        return column;
+                                    }
+                                },
+                                legend: { //Definition legend
+                                    node: $('#legend'),
+                                    items: [
+                                        ['a', 'available', 'Available'],
+                                        ['a', 'unavailable', 'Sold'],
+                                        ['a', 'selected', 'Selected']
+                                    ]
+                                },
+                                click: function () { //Click event
+                                    if (this.status() == 'available') { //optional seat
+                                        $('<li>Row' + (this.settings.row + 1) + ' Seat' + this.settings.label + '</li>')
+                                            .attr('id', 'cart-item-' + this.settings.id)
+                                            .data('seatId', this.settings.id)
+                                            .appendTo($cart);
+
+                                        $counter1.text(sc.find('selected').length + 1);
+                                        $total.text(recalculateTotal(sc) + price);
+
+                                        return 'selected';
+                                    } else if (this.status() == 'selected') { //Checked
+                                        //Update Number
+                                        $counter1.text(sc.find('selected').length - 1);
+                                        //update totalnum
+                                        $total.text(recalculateTotal(sc) - price);
+
+                                        //Delete reservation
+                                        $('#cart-item-' + this.settings.id).remove();
+                                        //optional
+                                        return 'available';
+                                    } else if (this.status() == 'unavailable') { //sold
+                                        return 'unavailable';
+                                    } else {
+                                        return this.style();
+                                    }
+                                }
+                            });
+                            //sold seat
+                            sc.get(['1_2', '4_4', '4_5', '6_6', '6_7', '8_5', '8_6', '8_7', '8_8', '10_1', '10_2']).status('unavailable');
+
+                        });
+                        //sum total money
+                        function recalculateTotal(sc) {
+                            var total = 0;
+                            sc.find('selected').each(function () {
+                                total += price;
+                            });
+
+                            return total;
+                        }
+                    </script>
+
+                    <div class="clearfix"> </div>
+                </div>
+            </div>
+        </div>
+
+        <!--// e-grid-middle   Movie ticket Booking -->
+        <!--e-grid2-->
+        <div class="e-grid2">
+            <div class="container">
+                <div class="e-grid2-padding-w3agile">
+
+                    <section class="slider">
+                        <div class="flexslider">
+                            <ul class="slides">
+
+                                <li>
+                                    <div class="e-grid2-info">
+                                        <div class="e-grid2-text">
+                                            <h4>Some heading - 1</h4>
+                                            <p>
+                                                Ipsum is simply dummy text of the printing and typesetting simply dummy text of the printing industry
+                                                Ipsum is simply dummy text of the printing and typesetting simply dummy text of the printing industry.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="e-grid2-info">
+                                        <div class="e-grid2-text">
+                                            <h4>Some heading - 2</h4>
+                                            <p>
+                                                Ipsum is simply dummy text of the printing and typesetting simply dummy text of the printing industry
+                                                Ipsum is simply dummy text of the printing and typesetting simply dummy text of the printing industry.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="e-grid2-info">
+                                        <div class="e-grid2-text">
+                                            <h4>Some heading - 3</h4>
+                                            <p>
+                                                Ipsum is simply dummy text of the printing and typesetting simply dummy text of the printing industry
+                                                Ipsum is simply dummy text of the printing and typesetting simply dummy text of the printing industry.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="e-grid2-info">
+                                        <div class="e-grid2-text">
+                                            <h4>Some heading - 4</h4>
+                                            <p>
+                                                Ipsum is simply dummy text of the printing and typesetting simply dummy text of the printing industry
+                                                Ipsum is simply dummy text of the printing and typesetting simply dummy text of the printing industry.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </section>
+                    <!-- FlexSlider -->
+                    <link href="css/flexslider.css" rel="stylesheet" type="text/css" media="all" />
+                    <script defer src="js/jquery.flexslider.js"></script>
+                    <script type="text/javascript">
+                        $(window).load(function () {
+                            $('.flexslider').flexslider({
+                                animation: "slide",
+                                start: function (slider) {
+                                    $('body').removeClass('loading');
+                                }
+                            });
+                        });
+                    </script>
+                    <!-- //FlexSlider -->
+                    <div class="clearfix"> </div>
+                </div>
+            </div>
+        </div>
+        <!--//e-grid2-->
+        <!--e-grid3-->
+        <div class="e-grid3">
+            <div class="container">
+                <div class="e-grid3-padding-agileinfo">
+                    <h3> Games in Mall</h3>
+                    <div class="col-md-3 e-grid3-1">
+                        <div class="e-grid3-info">
+                            <img src="~/assets/images/e2.jpg" class="img-responsive" alt="">
+                            <div class="e-grid3-text">
+                                <h4>Name of the Game</h4>
+                                <p> some dummy text related to the game and the grid for the page</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 e-grid3-1">
+                        <div class="e-grid3-info">
+                            <img src="~/assets/images/e1.jpg" class="img-responsive" alt="">
+                            <div class="e-grid3-text">
+                                <h4>Name of the Game</h4>
+                                <p> some dummy text related to the game and the grid for the page</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 e-grid3-1">
+                        <div class="e-grid3-info">
+                            <img src="~/assets/images/e3.jpg" class="img-responsive" alt="">
+                            <div class="e-grid3-text">
+                                <h4>Name of the Game</h4>
+                                <p> some dummy text related to the game and the grid for the page</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 e-grid3-1">
+                        <div class="e-grid3-info">
+                            <img src="~/assets/images/e2.jpg" class="img-responsive" alt="">
+                            <div class="e-grid3-text">
+                                <h4>Name of the Game</h4>
+                                <p> some dummy text related to the game and the grid for the page</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="clearfix"> </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="backdrop" id="backdrop" onclick="closePopup()"></div>
+
+<div class="popup" id="popup">
+
+    <div class="mainDiv">
+        <div>
+            <div class="title">
+                <h1 style="text-align:center; background-color: black; padding: 10px 0; color: white; font-size: 25px">Booking Online</h1>
+                @*<h2 style="padding: 10px; background-color: #fff1ce; font-size: 20px; text-align:left">adasdasdas</h2>*@
+                <div class="noteFilm">
+                    <div>
+                        <div class="Date" style="border-bottom: 1px solid #ccc; padding: 10px 0; text-align: center;">
+                            <div class="row">
+                                <div class="col-md-2 chooseDate"><a href="#" style="font-size: 20px"><span style="font-size: 30px">29</span>/05 - T4</a></div>
+                                <div class="col-md-2 chooseDate"><a href="#" style="font-size: 20px"><span style="font-size: 30px">30</span>/05 - T5</a></div>
+                                <div class="col-md-2 chooseDate"><a href="#" style="font-size: 20px"><span style="font-size: 30px">31</span>/05 - T6</a></div>
+                                <div class="col-md-2 chooseDate"><a href="#" style="font-size: 20px"><span style="font-size: 30px">01</span>/06 - T7</a></div>
+                                <div class="col-md-2 chooseDate"><a href="#" style="font-size: 20px"><span style="font-size: 30px">02</span>/06 - CN</a></div>
+                                <div class="col-md-2 chooseDate"><a href="#" style="font-size: 20px"><span style="font-size: 30px">03</span>/06 - T2</a></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="font-size:14px">
+                        <span>ABCDMall | </span>
+                        <span>Cinema 2 | </span>
+                        <span>Số ghế: 50/66</span>
+                    </div>
+                </div>
+            </div>
+            <br />
+
+            <div id="seatMap">
+                <!-- Các ghế xem phim sẽ được tạo và hiển thị ở đây -->
+            </div>
+        </div>
+        <div class="noteTicket">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-2"></div>
+                <div class="col-md-2">
+                    <div class="typeNote">
+                        <div class="seatNote" style="background-color: #ff0000; border:none;"></div>
+                        <span>Checked</span>
+                    </div>
+                    <div class="typeNote">
+                        <div class="seatNote" style="background-color: #bbb; border:none;"></div>
+                        <span>Đã chọn</span>
+                    </div>
+                    <div class="typeNote">
+                        <div class="seatNote cannel" style="background-color: #bbb; border:none;"></div>
+                        <span>Không thể chọn</span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="typeNote">
+                        <div class="seatNote"></div>
+                        <span>Thường</span>
+                    </div>
+                    <div class="typeNote">
+                        <div class="seatNote" style="background-color: #FF62B0; border:none;"></div>
+                        <span>Ghế đôi</span>
+                    </div>
+                </div>
+                <div class="col-md-2"></div>
+                <div class="col-md-2"></div>
+            </div>
+        </div>
+        <div class="infoTicket">
+            <div class="top"></div>
+            <div class="contentTicket" style="padding: 10px 40px;">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <img src="~/images/interstellar.jpg" />
+                            </div>
+                            <div class="col-md-6">
+                                <h4>Tên film</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>Thời gian</h4>
+                            </div>
+                            <div class="col-md-6">
+                                <h4>Phòng chiếu</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <h4>Ghế</h4>
+                        <h4>Tổng tiền</h4>
+                    </div>
+                    <div class="col-md-3">
+                        <button>Tiếp theo</button>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom"></div>
+        </div>
+        <br/>
+    </div>
+
+    <!-- Nội dung của popup ở đây -->
+@*    <p>This is a popup</p>
+    <a asp-controller="Home" asp-action="Booking">Đặt ghế</a>
+    <button onclick="closePopup()">Close</button>*@
+</div>
+
+<script>
+        <!--    Js for Responsive slider-- >
+    // You can also use "$(window).load(function() {"
+    $(function () {
+        // Slideshow 1
+        $("#slider1, #slider3").responsiveSlides({
+            auto: true,
+            nav: true,
+            speed: 1000,
+            namespace: "callbacks",
+        });
+        // Slideshow 2
+        $("#slider2").responsiveSlides({
+            auto: true,
+            nav: true,
+            speed: 3000,
+            namespace: "callbacks",
+        });
+    });
+</script>
+
+<script>
+    function openPopup() {
+        document.getElementById('backdrop').style.display = 'block';
+        document.getElementById('popup').style.display = 'block';
+        console.log('Open');
+    }
+
+    function closePopup() {
+        document.getElementById('backdrop').style.display = 'none';
+        document.getElementById('popup').style.display = 'none';
+        console.log('Close');
+    }
+</script>
+
+<script>
+    // Số lượng ghế và sơ đồ ghế xem phim
+    var totalSeats = 12;
+    var arrCell = ["A", "B", "C", "D", "E", "F", "G", "H"];
+    var selectedSeats = [];
+
+    // Tạo sơ đồ ghế xem phim
+    var seatMapElement = document.getElementById("seatMap");
+    for (var i = 0; i < arrCell.length; i++) {
+        const element = arrCell[i];
+        if (i == arrCell.length - 1) {
+            var divCouple = document.createElement("div");
+            divCouple.className = "divCouple";
+            for (var j = 1; j <= (totalSeats / 2); j++) {
+                // var wid = 63;
+                var seatElement = document.createElement("div");
+                var paragraphElement = document.createElement("p");
+                // seatElement.style.width = (wid+j).toString() + "px";
+                // seatElement.style.width = "63px";
+                paragraphElement.className = "nameSeatCouple";
+                seatElement.className = "seatCouple";
+                paragraphElement.textContent = element + j;
+                seatElement.addEventListener("click", function () {
+                    // Xử lý sự kiện khi ghế được chọn
+                    this.classList.toggle("selected");
+                    var seatNumber = parseInt(this.textContent);
+                    if (selectedSeats.includes(seatNumber)) {
+                        selectedSeats = selectedSeats.filter(function (seat) {
+                            return seat !== seatNumber;
+                        });
+                    } else {
+                        selectedSeats.push(seatNumber);
+                    }
+                });
+                seatElement.appendChild(paragraphElement);
+                divCouple.appendChild(seatElement);
+            }
+            seatMapElement.appendChild(divCouple);
+            var brElement = document.createElement("br");
+            seatMapElement.appendChild(brElement);
+        } else {
+            for (var j = 1; j <= totalSeats; j++) {
+                // const element = arrCell[i];
+
+                var seatElement = document.createElement("div");
+                var paragraphElement = document.createElement("p");
+                paragraphElement.className = "nameSeat";
+                seatElement.className = "seat";
+                paragraphElement.textContent = element + j;
+                seatElement.addEventListener("click", function () {
+                    // Xử lý sự kiện khi ghế được chọn
+                    this.classList.toggle("selected");
+                    var seatNumber = parseInt(this.textContent);
+                    if (selectedSeats.includes(seatNumber)) {
+                        selectedSeats = selectedSeats.filter(function (seat) {
+                            return seat !== seatNumber;
+                        });
+                    } else {
+                        selectedSeats.push(seatNumber);
+                    }
+                });
+                seatElement.appendChild(paragraphElement);
+                seatMapElement.appendChild(seatElement);
+            }
+            var brElement = document.createElement("br");
+            seatMapElement.appendChild(brElement);
+        }
+    }
+    var submitButton = document.getElementById("submitButton");
+    submitButton.addEventListener("click", function () {
+        if (selectedSeats.length > 0) {
+            alert("Bạn đã chọn ghế: " + selectedSeats.join(", "));
+        } else {
+            alert("Vui lòng chọn ít nhất một ghế.");
+        }
+    });
+</script>
