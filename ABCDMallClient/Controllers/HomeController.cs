@@ -37,16 +37,16 @@ namespace ABCDMallClient.Controllers
             try
             {
                 DateTime dt = DateTime.ParseExact("23/04/2024", "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                Film[] film = new Film[]
+                Movies[] film = new Movies[]
                 {
-                    new  Film {FilmId = 1, Title = "GreenBook", Time = 130, ReleaseDate = dt, Image = "~/images/interstellar.jpg", Genre = "Tình cảm"},
-                    new  Film {FilmId = 1, Title = "GreenBook", Time = 130, ReleaseDate = dt, Image = "~/images/interstellar.jpg", Genre = "Tình cảm"},
-                    new  Film {FilmId = 1, Title = "GreenBook", Time = 130, ReleaseDate = dt, Image = "~/images/interstellar.jpg", Genre = "Tình cảm"},
-                    new  Film {FilmId = 1, Title = "GreenBook", Time = 130, ReleaseDate = dt, Image = "~/images/interstellar.jpg", Genre = "Tình cảm"},
+                    new  Movies {FilmId = 1, Title = "GreenBook", Time = 130, ReleaseDate = dt, Image = "~/images/interstellar.jpg", Genre = "Tình cảm"},
+                    new  Movies {FilmId = 1, Title = "GreenBook", Time = 130, ReleaseDate = dt, Image = "~/images/interstellar.jpg", Genre = "Tình cảm"},
+                    new  Movies {FilmId = 1, Title = "GreenBook", Time = 130, ReleaseDate = dt, Image = "~/images/interstellar.jpg", Genre = "Tình cảm"},
+                    new  Movies {FilmId = 1, Title = "GreenBook", Time = 130, ReleaseDate = dt, Image = "~/images/interstellar.jpg", Genre = "Tình cảm"},
                 };
 
                 GetDataToViewModel getDataModel = new GetDataToViewModel();
-                getDataModel.filmList = film.ToPagedList<Film>(1, 5);
+                getDataModel.filmList = film.ToPagedList<Movies>(1, 5);
                 return View(getDataModel);
             }
             catch (Exception)

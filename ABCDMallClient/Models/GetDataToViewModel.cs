@@ -15,7 +15,7 @@ namespace ABCDMallClient.Models
         //public Genre genre { get; set; }
         //public IPagedList<Genre> genreList { get; set; }
 
-        public Film film { get; set; }
-        public IPagedList<Film> filmList { get; set; }
+        public Movies film { get; set; }
+        public IPagedList<Movies> filmList { get; set; }
     }
 }
